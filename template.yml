@@ -1,0 +1,50 @@
+version: '2.1'
+services:
+  wordpress:
+    image: wordpress:latest
+    restart: always
+    # build: .
+    volumes:
+      - ./conf.d/uploads.ini:/usr/local/etc/php/conf.d/uploads.ini
+      - ./theme-name:/var/www/html/wp-content/themes/theme-name
+      - ./.wp-app/wp-content:/var/www/html/wp-content
+
+    environment:
+      WORDPRESS_DB_HOST: mysqldb:${DB_PORT}
+      WORDPRESS_DB_NAME: ${DB_DATABASE}
+      WORDPRESS_DB_USER: ${DB_USERNAME}
+      WORDPRESS_DB_PASSWORD: ${DB_PASSWORD}
+      WORDPRESS_TABLE_PREFIX: "wp_"
+      WORDPRESS_DEBUG: ${WORDPRESS_DEBUG}
+    ports:
+      - 80:80
+    networks:
+      - back
+  mysqldb:
+    image: mysql:5.7
+    # container_name: ${DB_CONNECTION}
+    restart: always
+    volumes:
+      - db_data:/var/lib/mysql
+    environment:
+      # MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${DB_DATABASE}
+      MYSQL_USER: ${DB_USERNAME}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
+    networks:
+      - back
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    restart: always
+    ports:
+      - 8080:80
+    environment:
+      PMA_HOST: ${DB_CONNECTION}
+      PMA_PORT: ${DB_PORT}
+    networks:
+      - back
+networks:
+  back:
+volumes:
+  db_data:
