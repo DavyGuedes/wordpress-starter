@@ -1,6 +1,6 @@
 # wordpress-starter
 
-Template for WordPress Development
+Template para desenvolvimento com WordPress
 
 ## Instalação
 
@@ -14,8 +14,18 @@ OS X & Linux:
 # Run the application
 docker-compose up -d
 
+# Fix permissions (workaround)
+# See https://github.com/docker/compose/issues/3270
+sudo chown -R www-data:www-data .wp-app
+sudo chown -R $USER:$USER my-theme
+sudo chown -R $USER:$USER my-plugin
+
 ```
 
-## TODO
+Limpando o ambiente:
 
-- [ ] Fix permission in wp-content folder
+```bash
+docker-compose down -v
+```
+
+>Elimina os volumes dos serviço `wordpress` e `mysqldb` definidos em `template.yml`
